@@ -10,6 +10,7 @@ from sensor_msgs.msg import Image
 from nav2_msgs.action import NavigateToPose
 from cv_bridge import CvBridge, CvBridgeError
 from rclpy.exceptions import ROSInterruptException
+from math import sin, cos, pi
 import signal
 
 
@@ -303,7 +304,7 @@ def main():
                         y = WAYPOINTS[bot.waypoint_idx][1]
                         theta = WAYPOINTS[bot.waypoint_idx][2]
                         bot.get_logger().info(
-                            f'Navigating to waypoint {bot.waypoint_idx}')
+                            f'Navigating to waypoint {bot.waypoint_idx + 1} of {len(WAYPOINTS)}: x={x}, y={y}, theta={theta}')
                         bot.send_goal(x, y, theta)
                         bot.waypoint_idx += 1
                     else:
