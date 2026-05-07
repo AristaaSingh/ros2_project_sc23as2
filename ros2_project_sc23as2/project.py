@@ -24,6 +24,7 @@ WAYPOINTS = [
     (-3.0, -3.0, 0.0),
     (-1.0, -5.0, math.pi),
     (1.65, -11.0, math.pi/2),
+    (-7.5, -11.5, math.pi)
 ]
 
 
@@ -47,8 +48,10 @@ class Robot(Node):
         self.red_detected = False
         self.blue_detected = False
 
-        # for printing final colour summary is only printed once cuz of loop
+        # some flags to prevent endless printing in task end cases
         self.summary_printed = False
+        self.all_waypoints_printed = False
+        self.blue_lost_printed = False
 
         # pixel area of the blue blob, to decide when to stop approaching blue box
         self.blue_area = 0
@@ -310,7 +313,9 @@ def main():
                     else:
                         # all waypoints done and blue not yet found, stop
                         bot.stop()
-                        bot.get_logger().info("All waypoints visited, blue box not found")
+                        if not bot.all_waypoints_printed:
+                            bot.get_logger().info("All waypoints visited, blue box not found")
+                            bot.all_waypoints_printed = True
 
             # APPROACHING STATE
             # drive toward the blue box directly using cmd_vel, steering based on where the blob is 
@@ -325,7 +330,9 @@ def main():
                     bot.approach_blue()
                 else:
                     bot.stop()
-                    bot.get_logger().info('Lost blue box, waiting')
+                    if not bot.blue_lost_printed:
+                        bot.get_logger().info('Lost sight of blue box — waiting')
+                        bot.blue_lost_printed = True
 
             # STOPPED STATE
             # task complete, stop bot
